@@ -21,7 +21,9 @@ describe('chainer', () => {
 
     // step by step: f1(0)=0, f2(0+2)=2, f3(2^2)=4
     expect(chained(0)).toBe(4);
-    expect(chained(1)).toBe(9); // f1(1)=2, f2(2+2)=4, f3(4^2)=16
+
+    // step by step: f1(1)=2, f2(2)=4, f3(4^2)=16
+    expect(chained(1)).toBe(16);
   });
 
   it('should handle a single function', () => {
@@ -46,5 +48,11 @@ describe('chainer', () => {
 
     expect(result).toBe(-1); // ((0+1)*2)-3 = -1
     expect(calls).toEqual(['f1','f2','f3']);
+  });
+
+  it('should propagate errors from any function', () => {
+    const errorFn = x => { throw new Error('fail'); };
+    const chained = chainer([x => x + 1, errorFn]);
+    expect(() => chained(0)).toThrow('fail');
   });
 });
